@@ -1,0 +1,80 @@
+apply plugin: 'com.android.application'
+
+repositories {
+    maven { url "https://jitpack.io" } // for material-dialogs
+    jcenter()
+    mavenCentral()
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "com.duyota.standardavatar"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 3
+        versionName "1.1"
+    }
+    signingConfigs {
+        release {
+            storeFile file('../../../../Dropbox/keystores/belikeme.keystore')
+            storePassword '123465@appota'
+            keyAlias 'appota'
+            keyPassword '123465@appota'
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            signingConfig signingConfigs.release
+            android.applicationVariants.all { variant ->
+                def flavor = variant.mergedFlavor
+                def versionName = flavor.getVersionName()
+                def versionCode = flavor.getVersionCode()
+                variant.outputs.each { output ->
+                    def file = output.outputFile
+                    def fileName = file.name.replace(".apk", versionName + "." + versionCode + ".120516.apk")
+                    output.outputFile = new File(file.parent, fileName)
+                }
+            }
+            minifyEnabled false
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+            //resValue "string", "fb_provider", "com.facebook.app.FacebookContentProvider1428953814078604"
+        }
+
+        debugRelease.initWith(buildTypes.release)
+
+        debugRelease {
+            debuggable true
+            signingConfig signingConfigs.release
+        }
+
+        debug {
+            //applicationIdSuffix ".test"
+            debuggable true
+            //resValue "string", "fb_provider", "com.facebook.app.test.FacebookContentProvider1428953814078604"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.5@aar') {
+        transitive = true
+    }
+    compile 'com.parse.bolts:bolts-android:1.+'
+    compile 'com.karumi:dexter:2.2.0'
+    compile 'com.google.android.gms:play-services-ads:8.4.0'
+}
